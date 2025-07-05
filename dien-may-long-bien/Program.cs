@@ -14,7 +14,7 @@ builder.LoadEnv();
 builder.Services.AddJwt(builder.Configuration);
 builder.Services.AddPostgres(builder.Configuration);
 
-// Register CurrentUser service
+builder.Services.AddScoped<AuthMiddleware>();
 builder.Services.AddScoped<CurrentUser>();
 
 var app = builder.Build();
