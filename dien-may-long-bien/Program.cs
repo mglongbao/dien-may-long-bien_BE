@@ -1,4 +1,5 @@
 using DienMayLongBien.Configurations;
+using DienMayLongBien.Domain.Shared;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.LoadEnv();
+builder.Services.AddJwt(builder.Configuration);
 builder.Services.AddPostgres(builder.Configuration);
 
 var app = builder.Build();
@@ -19,6 +21,8 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseHttpsRedirection();
 
 await app.RunAsync().ConfigureAwait(false);
