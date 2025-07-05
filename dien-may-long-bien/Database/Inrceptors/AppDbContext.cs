@@ -17,6 +17,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Product> Products { get; set; } = null!;
     public DbSet<ProductEditHistory> ProductEditHistories { get; set; } = null!;
     public DbSet<ProductOrder> ProductOrders { get; set; } = null!;
+    public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
     public DbSet<Supplier> Suppliers { get; set; }
     public DbSet<SupplierEditHistory> SupplierEditHistories { get; set; } = null!;
     public DbSet<User> Users { get; set; }
