@@ -1,5 +1,6 @@
 using DienMayLongBien.Configurations;
 using DienMayLongBien.Domain.Shared;
+using DienMayLongBien.Middlewares;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,9 @@ builder.LoadEnv();
 builder.Services.AddJwt(builder.Configuration);
 builder.Services.AddPostgres(builder.Configuration);
 
+// Register CurrentUser service
+builder.Services.AddScoped<CurrentUser>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -21,8 +25,12 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+// Add authentication middleware
+app.UseMiddleware<AuthMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseHttpsRedirection();
 
 await app.RunAsync().ConfigureAwait(false);
