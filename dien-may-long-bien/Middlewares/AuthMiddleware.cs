@@ -8,22 +8,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DienMayLongBien.Middlewares;
 
-public class AuthMiddleware : IMiddleware
+public class AuthMiddleware(IConfiguration configuration) : IMiddleware
 {
-    private readonly IConfiguration _configuration;
-
-    public AuthMiddleware(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         // configure issuer
         string issuer =
-            _configuration["ISSUER"] ?? throw new ArgumentNullException("Issuer is not configured");
+            configuration["ISSUER"] ?? throw new ArgumentNullException("Issuer is not configured");
 
         string? authHeader = context.Request.Headers.Authorization.ToString();
+
         if (string.IsNullOrEmpty(authHeader) || !authHeader.Contains("Bearer "))
         {
             await next.Invoke(context);
@@ -55,13 +49,15 @@ public class AuthMiddleware : IMiddleware
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 
-            var response = new
+            var response = new ResponseResult<string>
             {
                 IsSuccess = false,
-                Value = (string?)null,
+                Value = null!,
                 Message = "Invalid user ID"
             };
+
             await context.Response.WriteAsJsonAsync(response, default);
+
             return;
         }
 
@@ -73,13 +69,15 @@ public class AuthMiddleware : IMiddleware
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 
-            var response = new
+            var response = new ResponseResult<string>
             {
                 IsSuccess = false,
-                Value = (string?)null,
+                Value = null!,
                 Message = "User not found"
             };
+
             await context.Response.WriteAsJsonAsync(response, default);
+
             return;
         }
 
