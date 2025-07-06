@@ -19,6 +19,9 @@ public static class JwtConfiguration
         var secretKey =
             configuration["JWT_SECRET"]
             ?? throw new InvalidOperationException("Secret Key is missing");
+        var ExpirationInMinutes =
+            configuration["JWT_EXPIRATION_IN_MINUTES"]
+            ?? throw new InvalidOperationException("Expiration in minutes is missing");
 
         JwtSetting jwtSetting =
             new()
@@ -26,7 +29,7 @@ public static class JwtConfiguration
                 Issuer = issuer,
                 Audience = audience,
                 Secret = secretKey,
-                ExpirationInMinutes = 1440 // 24 hours
+                ExpirationInMinutes = int.Parse(ExpirationInMinutes)
             };
 
         var tokenValidationParameters = new TokenValidationParameters
